@@ -1,0 +1,193 @@
+services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Core Infrastructure
+  # ─────────────────────────────────────────────────────────────────────────
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v25.1.2
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,PLAINTEXT_HOST://localhost:9092
+    ports:
+      - "9092:9092"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    environment:
+      REDPANDA_AUTO_CREATE_TOPICS_ENABLED: "true"
+    networks:
+      - siemnetwork
+    healthcheck:
+      test: rpk cluster info
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - indices.memory.index_buffer_size=25%
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - siemnetwork
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - siemnetwork
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Security Monitoring
+  # ─────────────────────────────────────────────────────────────────────────
+
+  falco:
+    image: falcosecurity/falco:latest
+    container_name: falco
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+      - SYS_RESOURCE
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - /proc:/host/proc:ro
+      - /sys:/sys/kernel/debug:rw
+      - ./falco_http_output.yaml:/etc/falco/config.d/http_output.yaml:ro
+      - ./src/custom_falco_rules.yaml:/etc/falco/rules.d/custom_rules.yaml:ro
+      - falco-data:/var/lib/falco
+    environment:
+      FALCO_HOST_ROOT: /host
+    networks:
+      - siemnetwork
+    depends_on:
+      - producer
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # SIEM Services
+  # ─────────────────────────────────────────────────────────────────────────
+
+  producer:
+    image: virajjs/siem-producer:v1.0.0
+    container_name: producer
+    ports:
+      - "5140:5140"
+    environment:
+      REDPANDA_BROKER: redpanda:29092
+    networks:
+      - siemnetwork
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f http://localhost:5140/docs || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  consumer:
+    image: virajjs/siem-consumer:v1.0.0
+    container_name: consumer
+    environment:
+      REDPANDA_BROKER: redpanda:29092
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - siemnetwork
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  websocket-server:
+    image: virajjs/siem-websocket:v1.0.0
+    container_name: websocket-server
+    ports:
+      - "8765:8765"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      ELASTICSEARCH_HOST: http://elasticsearch:9200
+      REDPANDA_BROKER: redpanda:29092
+      WS_HOST: 0.0.0.0
+      WS_PORT: 8765
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - siemnetwork
+    depends_on:
+      redpanda:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Frontend Dashboard
+  # ─────────────────────────────────────────────────────────────────────────
+  dashboard:
+    image: virajjs/siem-dashboard:v1.0.0
+    container_name: dashboard
+    ports:
+      - "3000:80"   # back to 80 since nginx serves on 80
+    environment:
+      VITE_API_URL: http://localhost:5140
+      VITE_WS_URL: ws://localhost:8765
+    networks:
+      - siemnetwork
+    depends_on:
+      - websocket-server
+      - producer
+    restart: unless-stopped
+
+networks:
+  siemnetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+volumes:
+  redpanda-data:
+  elasticsearch-data:
+  redis-data:
+  falco-data:
