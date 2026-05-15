@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: Explicit compose project name
+set COMPOSE_PROJECT_NAME=siem-system
+
 :: Always run from script directory
 cd /d "%~dp0"
 
@@ -9,12 +12,22 @@ echo ==================================================
 echo          SIEM System v1.0.0 - Windows Setup
 echo ==================================================
 echo.
+echo ==================================================
+echo IMPORTANT: If Windows Smart App Control blocks this script:
+echo 1. Click "More info"
+echo 2. Click "Run anyway"
+echo ==================================================
+echo.
 
+timeout /t 3 /nobreak >nul
+
+echo.
 echo [Step 1/6] Checking system requirements...
 echo.
 
 echo Checking for Docker...
 docker --version >nul 2>&1
+
 if errorlevel 1 (
     echo ERROR: Docker not found!
     echo.
@@ -32,6 +45,7 @@ echo.
 
 echo Checking if Docker is running...
 docker info >nul 2>&1
+
 if errorlevel 1 (
     echo ERROR: Docker is not running!
     echo.
@@ -48,6 +62,7 @@ echo.
 
 echo Checking internet connection...
 ping -n 2 github.com >nul 2>&1
+
 if errorlevel 1 (
     echo ERROR: No internet connection!
     echo.
@@ -96,9 +111,9 @@ if not errorlevel 1 (
     echo Found existing containers - stopping them first...
     docker compose down >nul 2>&1
     echo OK: Existing containers stopped
-    echo.
 )
 
+echo.
 echo [Step 4/6] Pulling Docker images (this may take a few minutes)...
 echo.
 
@@ -108,11 +123,9 @@ if errorlevel 1 (
     echo.
     echo ERROR: Failed to pull Docker images!
     echo.
-    echo Try running manually:
-    echo docker compose pull
-    echo.
-    echo Check compose file using:
+    echo Try manually:
     echo docker compose config
+    echo docker compose pull
     echo.
     echo For help, contact: vrajgavade17@gmail.com
     echo.
@@ -133,7 +146,7 @@ if errorlevel 1 (
     echo.
     echo ERROR: Failed to start SIEM System!
     echo.
-    echo Check logs using:
+    echo Check logs with:
     echo docker compose logs
     echo.
     echo For help, contact: vrajgavade17@gmail.com
@@ -148,7 +161,6 @@ echo.
 
 echo [Step 6/6] Waiting for services to be ready...
 echo This will take about 30-60 seconds...
-echo.
 
 timeout /t 45 /nobreak >nul
 
@@ -174,6 +186,7 @@ echo Need help? Contact: vrajgavade17@gmail.com
 echo.
 
 echo Opening dashboard in your browser...
+
 timeout /t 3 /nobreak >nul
 
 start http://localhost:3000
