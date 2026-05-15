@@ -1,3 +1,4 @@
+name: siem-system
 services:
   # ─────────────────────────────────────────────────────────────────────────
   # Core Infrastructure
