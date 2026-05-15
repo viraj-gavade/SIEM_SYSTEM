@@ -18,8 +18,8 @@ Go to the [**Releases page**](https://github.com/viraj-gavade/SIEM-System/releas
 
 | OS | File to download |
 |----|-----------------|
-| Windows | `setup.bat` |
-| macOS / Linux | `setup.sh` |
+| Windows | `start.bat` |
+| macOS / Linux | `start.sh` |
 
 ---
 
@@ -32,18 +32,18 @@ Go to the [**Releases page**](https://github.com/viraj-gavade/SIEM-System/releas
 Windows Defender SmartScreen may flag the `.bat` file as unrecognized. Here's how to allow it:
 
 **Option A — At the prompt (easiest):**
-When you double-click `setup.bat` and see a "Windows protected your PC" popup:
+When you double-click `start.bat` and see a "Windows protected your PC" popup:
 1. Click **"More info"**
 2. Click **"Run anyway"**
 
 **Option B — Disable SmartScreen temporarily:**
 1. Open **Windows Security** → **App & browser control**
 2. Under *Check apps and files*, select **"Off"**
-3. Run `setup.bat`
+3. Run `start.bat`
 4. Re-enable SmartScreen afterward (recommended)
 
 **Option C — Unblock the file:**
-1. Right-click `setup.bat` → **Properties**
+1. Right-click `start.bat` → **Properties**
 2. At the bottom, check **"Unblock"**
 3. Click **OK**, then run the file
 
@@ -53,21 +53,21 @@ When you double-click `setup.bat` and see a "Windows protected your PC" popup:
 
 #### 🍎 macOS — Allow Scripts from Unidentified Developers
 
-macOS Gatekeeper will likely block `setup.sh` since it isn't from the App Store. Here's how to fix it:
+macOS Gatekeeper will likely block `start.sh` since it isn't from the App Store. Here's how to fix it:
 
 **Step 1 — Make the script executable:**
 Open Terminal and run:
 ```bash
-chmod +x /path/to/setup.sh
+chmod +x /path/to/start.sh
 ```
 
 **Step 2 — Remove the quarantine flag:**
 ```bash
-xattr -d com.apple.quarantine /path/to/setup.sh
+xattr -d com.apple.quarantine /path/to/start.sh
 ```
 
 **Step 3 — Or allow it via System Settings:**
-1. Try to run `setup.sh` — macOS will block it and show a warning
+1. Try to run `start.sh` — macOS will block it and show a warning
 2. Open **System Settings** → **Privacy & Security**
 3. Scroll down to the *Security* section
 4. You'll see a message like *"setup.sh was blocked"* — click **"Allow Anyway"**
@@ -80,11 +80,11 @@ xattr -d com.apple.quarantine /path/to/setup.sh
 ### Step 3: Run the Script
 
 **Windows:**
-Double-click `setup.bat` — it will handle everything automatically.
+Double-click `start.bat` — it will handle everything automatically.
 
 **macOS / Linux:**
 ```bash
-./setup.sh
+./start.sh
 ```
 
 The script will pull all Docker images and start the SIEM system automatically.
@@ -93,7 +93,8 @@ The script will pull all Docker images and start the SIEM system automatically.
 
 ### Step 4: Open the Dashboard
 
-Once the script finishes, go to: **http://localhost:3000** 🎉
+Once the script finishes, go to: **http://localhost:3000**
+You can also file the URLs to Dashboard, API and Elasticsearch on the console
 
 ---
 
