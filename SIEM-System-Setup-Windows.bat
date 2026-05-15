@@ -1,12 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Explicit compose project name
-set COMPOSE_PROJECT_NAME=siem-system
-
-:: Always run from script directory
-cd /d "%~dp0"
-
 cls
 echo ==================================================
 echo          SIEM System v1.0.0 - Windows Setup
@@ -105,11 +99,11 @@ echo.
 echo [Step 3/6] Checking for existing containers...
 echo.
 
-docker compose ps -q >nul 2>&1
+docker compose -p siem-system ps -q >nul 2>&1
 
 if not errorlevel 1 (
     echo Found existing containers - stopping them first...
-    docker compose down >nul 2>&1
+    docker compose -p siem-system down >nul 2>&1
     echo OK: Existing containers stopped
 )
 
@@ -117,15 +111,14 @@ echo.
 echo [Step 4/6] Pulling Docker images (this may take a few minutes)...
 echo.
 
-docker compose pull
+docker compose -p siem-system pull
 
 if errorlevel 1 (
     echo.
     echo ERROR: Failed to pull Docker images!
     echo.
     echo Try manually:
-    echo docker compose config
-    echo docker compose pull
+    echo docker compose -p siem-system pull
     echo.
     echo For help, contact: vrajgavade17@gmail.com
     echo.
@@ -140,14 +133,14 @@ echo.
 echo [Step 5/6] Starting SIEM System...
 echo.
 
-docker compose up -d
+docker compose -p siem-system up -d
 
 if errorlevel 1 (
     echo.
     echo ERROR: Failed to start SIEM System!
     echo.
     echo Check logs with:
-    echo docker compose logs
+    echo docker compose -p siem-system logs
     echo.
     echo For help, contact: vrajgavade17@gmail.com
     echo.
@@ -174,13 +167,13 @@ echo.
 echo Useful Commands:
 echo.
 echo   Stop system:
-echo   docker compose down
+echo   docker compose -p siem-system down
 echo.
 echo   View logs:
-echo   docker compose logs -f
+echo   docker compose -p siem-system logs -f
 echo.
 echo   Check status:
-echo   docker compose ps
+echo   docker compose -p siem-system ps
 echo.
 echo Need help? Contact: vrajgavade17@gmail.com
 echo.
