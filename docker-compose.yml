@@ -96,7 +96,7 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
 
   producer:
-    image: virajjs/siem-producer:v1.0.0
+    image: virajjs/siem-producer:latest
     container_name: producer
     ports:
       - "5140:5140"
@@ -114,7 +114,7 @@ services:
       retries: 5
 
   consumer:
-    image: virajjs/siem-consumer:v1.0.0
+    image: virajjs/siem-consumer:latest
     container_name: consumer
     environment:
       REDPANDA_BROKER: redpanda:29092
@@ -133,7 +133,7 @@ services:
     restart: unless-stopped
 
   websocket-server:
-    image: virajjs/siem-websocket:v1.0.0
+    image: virajjs/siem-websocket:latest
     container_name: websocket-server
     ports:
       - "8765:8765"
