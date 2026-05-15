@@ -1,4 +1,8 @@
 services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Core Infrastructure
+  # ─────────────────────────────────────────────────────────────────────────
+
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v25.1.2
     container_name: redpanda
@@ -70,7 +74,7 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
 
   falco:
-    image: falcosecurity/falco:latest
+    image: virajjs/siem-falco:v1.0.0
     container_name: falco
     privileged: true
     cap_add:
@@ -81,8 +85,6 @@ services:
       - /var/run/docker.sock:/host/var/run/docker.sock
       - /proc:/host/proc:ro
       - /sys:/sys/kernel/debug:rw
-      - ./falco_http_output.yaml:/etc/falco/config.d/http_output.yaml:ro
-      - ./src/custom_falco_rules.yaml:/etc/falco/rules.d/custom_rules.yaml:ro
       - falco-data:/var/lib/falco
     environment:
       FALCO_HOST_ROOT: /host
@@ -160,11 +162,12 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
   # Frontend Dashboard
   # ─────────────────────────────────────────────────────────────────────────
+
   dashboard:
     image: virajjs/siem-dashboard:v1.0.0
     container_name: dashboard
     ports:
-      - "3000:80"   # back to 80 since nginx serves on 80
+      - "3000:80"
     environment:
       VITE_API_URL: http://localhost:5140
       VITE_WS_URL: ws://localhost:8765
