@@ -15,7 +15,8 @@
 
 #### Dashboard Features
 
-- ✅ **KPI Cards** - Active Incidents, Total Alerts, Total Logs, Critical Events
+- ✅ **10 KPI Cards** - 2 full rows of security metrics
+- ✅ **3 Visualizations** - Time Series, Severity Bar, Status Bar charts
 - ✅ **Incident List** - Complete incident history with severity badges
 - ✅ **Event Feed** - Latest security alerts and events
 - ✅ **Container Management** - View and control Docker containers
@@ -23,6 +24,18 @@
 - ✅ **Alert Sounds** - Audio alerts for new incidents (CRITICAL/HIGH/MEDIUM)
 - ✅ **Popup Notifications** - Toast notifications for new incidents
 - ✅ **Fullscreen Flash** - Critical incidents trigger fullscreen alert
+
+#### 🚀 ONE-CLICK SETUP (NEW!)
+
+- ✅ **Windows Setup Script** (`SIEM-System-Setup-Windows.bat`)
+  - System checks (Docker installed, Docker running, internet)
+  - Automatic image pull and system start
+  - Opens dashboard automatically
+  - Contact email for support
+
+- ✅ **Linux/macOS Setup Script** (`SIEM-System-Setup-Linux-Mac.sh`)
+  - Same features as Windows script
+  - Works on all major Linux distros and macOS
 
 #### Architecture
 
@@ -60,16 +73,50 @@
 
 ### 🚀 Quick Start
 
+#### Option 1: ONE-CLICK SETUP (EASIEST!)
+
+**Windows**:
+1. Download `SIEM-System-Setup-Windows.bat` from Releases
+2. Double-click the `.bat` file
+3. **If Windows Smart App Control blocks it**:
+   - Click **"More info"**
+   - Click **"Run anyway"**
+4. That's it!
+
+**Linux/macOS**:
+1. Download `SIEM-System-Setup-Linux-Mac.sh` from Releases
+2. Run:
+   ```bash
+   chmod +x SIEM-System-Setup-Linux-Mac.sh
+   ./SIEM-System-Setup-Linux-Mac.sh
+   ```
+3. That's it!
+
+#### Option 2: MANUAL SETUP (Backup if script is blocked)
+
+**For ALL Platforms**:
+1. Download **only** `docker-compose.yml` from Releases
+2. Save it to a folder on your computer
+3. Open a terminal/command prompt in that folder
+4. Run:
+   ```bash
+   docker-compose up -d
+   ```
+5. Open http://localhost:3000 in your browser
+
+#### Option 2: Manual Setup
+
 1. **Start the system**:
    ```bash
-   cd d:\SIEM System
    docker-compose up -d
    ```
 2. **Access the dashboard**:
    - Open <http://localhost:3000> in your browser
-3. **Test the system**:
-   - Run suspicious commands in a test container to generate alerts
-   - Watch the dashboard update in real-time
+
+***
+
+### ❓ Need Help?
+Contact: **vrajgavade17@gmail.com**
 
 ***
 
@@ -86,7 +133,7 @@ Check out `IMPROVEMENTS.md` for our roadmap, including:
 
 - Slack/PagerDuty notifications
 - User authentication & RBAC
-- MITRE ATT\&CK integration
+- MITRE ATT&CK integration
 - Threat intelligence feeds
 - Automated response playbooks
 - And much more!
