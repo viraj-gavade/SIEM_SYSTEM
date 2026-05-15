@@ -1,8 +1,4 @@
 services:
-  # ─────────────────────────────────────────────────────────────────────────
-  # Core Infrastructure
-  # ─────────────────────────────────────────────────────────────────────────
-
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v25.1.2
     container_name: redpanda
