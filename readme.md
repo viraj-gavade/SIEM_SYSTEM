@@ -4,26 +4,100 @@ A modern, containerized Security Information and Event Management (SIEM) system 
 
 ---
 
-## � ZERO-CLICK SETUP (NO GIT NEEDED!)
+## 🚀 EASIEST SETUP — ONE SCRIPT, ZERO CONFIG
 
-### Step 1: Download Just One File
-Download **only** the `docker-compose.yml` file to your computer:
-- **From GitHub**: Go to https://github.com/viraj-gavade/SIEM-System/blob/master/docker-compose.yml → Click "Raw" → Save as `docker-compose.yml`
-
-### Step 2: Run One Command
-Open a terminal in the folder where you saved `docker-compose.yml` and run:
-```bash
-docker-compose up -d
-```
-
-### Step 3: Open the Dashboard
-Go to: **http://localhost:3000**
-
-That's it! You're done! 🎊
+### Prerequisites
+- **Docker Desktop** must be installed and running before you begin.
+  - Download: https://www.docker.com/products/docker-desktop/
 
 ---
 
-## �📋 Table of Contents
+### Step 1: Download the Setup Script
+
+Go to the [**Releases page**](https://github.com/viraj-gavade/SIEM-System/releases) and download the setup script for your operating system:
+
+| OS | File to download |
+|----|-----------------|
+| Windows | `setup.bat` |
+| macOS / Linux | `setup.sh` |
+
+---
+
+### Step 2: Allow the Script to Run
+
+> ⚠️ Your OS security features may block the script from running. Follow the steps for your system below.
+
+#### 🪟 Windows — Disable Windows Defender SmartScreen & Defender Warning
+
+Windows Defender SmartScreen may flag the `.bat` file as unrecognized. Here's how to allow it:
+
+**Option A — At the prompt (easiest):**
+When you double-click `setup.bat` and see a "Windows protected your PC" popup:
+1. Click **"More info"**
+2. Click **"Run anyway"**
+
+**Option B — Disable SmartScreen temporarily:**
+1. Open **Windows Security** → **App & browser control**
+2. Under *Check apps and files*, select **"Off"**
+3. Run `setup.bat`
+4. Re-enable SmartScreen afterward (recommended)
+
+**Option C — Unblock the file:**
+1. Right-click `setup.bat` → **Properties**
+2. At the bottom, check **"Unblock"**
+3. Click **OK**, then run the file
+
+> 💡 You may also see a Windows Defender real-time protection warning the first time. Click **"Allow"** or **"Allow on device"** if prompted.
+
+---
+
+#### 🍎 macOS — Allow Scripts from Unidentified Developers
+
+macOS Gatekeeper will likely block `setup.sh` since it isn't from the App Store. Here's how to fix it:
+
+**Step 1 — Make the script executable:**
+Open Terminal and run:
+```bash
+chmod +x /path/to/setup.sh
+```
+
+**Step 2 — Remove the quarantine flag:**
+```bash
+xattr -d com.apple.quarantine /path/to/setup.sh
+```
+
+**Step 3 — Or allow it via System Settings:**
+1. Try to run `setup.sh` — macOS will block it and show a warning
+2. Open **System Settings** → **Privacy & Security**
+3. Scroll down to the *Security* section
+4. You'll see a message like *"setup.sh was blocked"* — click **"Allow Anyway"**
+5. Run the script again and click **"Open"** when prompted
+
+> 💡 On older macOS (Ventura and below): Go to **System Preferences** → **Security & Privacy** → **General** tab → click **"Open Anyway"**
+
+---
+
+### Step 3: Run the Script
+
+**Windows:**
+Double-click `setup.bat` — it will handle everything automatically.
+
+**macOS / Linux:**
+```bash
+./setup.sh
+```
+
+The script will pull all Docker images and start the SIEM system automatically.
+
+---
+
+### Step 4: Open the Dashboard
+
+Once the script finishes, go to: **http://localhost:3000** 🎉
+
+---
+
+## 📋 Table of Contents
 - [Features](#-features)
 - [Architecture](#-architecture)
 - [Docker Images](#-docker-images)
@@ -113,7 +187,6 @@ All v1.0.0 images are available on **Docker Hub** AND **GitHub Container Registr
 The `docker-compose.yml` is already configured to use the Docker Hub images! Just run:
 
 ```bash
-cd d:\SIEM System
 docker-compose up -d
 ```
 
@@ -128,7 +201,6 @@ To use GitHub Container Registry instead of Docker Hub, update the image names i
 If you want to build the images locally instead of using Docker Hub:
 
 ```bash
-cd d:\SIEM System
 docker-compose build
 ```
 
@@ -154,7 +226,7 @@ Then update `docker-compose.yml` to use your registry images.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Manual / Docker Compose)
 
 ### Prerequisites
 - Docker Desktop (Windows/Mac) or Docker Engine (Linux)
@@ -165,7 +237,7 @@ Then update `docker-compose.yml` to use your registry images.
 
 1. **Clone or navigate to the project directory**:
    ```bash
-   cd d:\SIEM System
+   cd SIEM-System
    ```
 
 2. **Start the system**:
@@ -187,7 +259,6 @@ Then update `docker-compose.yml` to use your registry images.
 
 ### Step 1: Start the System
 ```bash
-cd d:\SIEM System
 docker-compose up -d
 ```
 
@@ -315,6 +386,8 @@ docker-compose logs -f <service-name>
 
 ## 🧪 Testing the System
 
+Use any of the three options in Step 4 above to generate test events and verify the system is working correctly.
+
 ---
 
 ## 🔧 Troubleshooting
@@ -340,6 +413,14 @@ docker-compose logs -f <service-name>
 - This is normal for Elasticsearch - it's a resource-intensive application
 - Make sure you have at least 4 GB RAM allocated to Docker
 - You can limit resources in docker-compose.yml if needed
+
+#### **Setup script blocked on Windows**
+- See the [Windows SmartScreen steps](#-windows--disable-windows-defender-smartscreen--defender-warning) above
+- Right-click the `.bat` file → Properties → check "Unblock" → OK
+
+#### **Setup script blocked on macOS**
+- See the [macOS Gatekeeper steps](#-macos--allow-scripts-from-unidentified-developers) above
+- Run `xattr -d com.apple.quarantine setup.sh` in Terminal, then try again
 
 ### Useful Commands
 
@@ -428,4 +509,3 @@ Remember: This is a security tool - always use it responsibly and in accordance 
 ---
 
 **Thank you for using our SIEM System!** 🎉
-
