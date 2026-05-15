@@ -26,6 +26,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+
 echo OK: Docker is installed
 echo.
 
@@ -41,6 +42,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+
 echo OK: Docker is running
 echo.
 
@@ -56,6 +58,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+
 echo OK: Internet connection available
 echo.
 
@@ -65,6 +68,7 @@ echo ==================================================
 echo.
 
 echo [Step 2/6] Downloading docker-compose.yml...
+echo.
 
 powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/viraj-gavade/SIEM_SYSTEM/main/docker-compose.yml' -OutFile 'docker-compose.yml'"
 
@@ -83,28 +87,17 @@ if not exist docker-compose.yml (
 echo OK: Downloaded docker-compose.yml successfully!
 echo.
 
-echo Fixing docker-compose project name...
-
-powershell -Command ^
-"$content = Get-Content docker-compose.yml; ^
-if ($content[0] -notmatch '^name:') { ^
-    Set-Content docker-compose.yml ('name: siem-system',''); ^
-    Add-Content docker-compose.yml $content ^
-}"
-
-echo OK: docker-compose.yml fixed
+echo [Step 3/6] Checking for existing containers...
 echo.
 
-echo [Step 3/6] Checking for existing containers...
-
 docker compose ps -q >nul 2>&1
+
 if not errorlevel 1 (
     echo Found existing containers - stopping them first...
     docker compose down >nul 2>&1
     echo OK: Existing containers stopped
+    echo.
 )
-
-echo.
 
 echo [Step 4/6] Pulling Docker images (this may take a few minutes)...
 echo.
@@ -117,6 +110,9 @@ if errorlevel 1 (
     echo.
     echo Try running manually:
     echo docker compose pull
+    echo.
+    echo Check compose file using:
+    echo docker compose config
     echo.
     echo For help, contact: vrajgavade17@gmail.com
     echo.
@@ -152,6 +148,7 @@ echo.
 
 echo [Step 6/6] Waiting for services to be ready...
 echo This will take about 30-60 seconds...
+echo.
 
 timeout /t 45 /nobreak >nul
 
@@ -163,15 +160,20 @@ echo.
 echo Dashboard: http://localhost:3000
 echo.
 echo Useful Commands:
-echo   - Stop system: docker compose down
-echo   - View logs:    docker compose logs -f
-echo   - Check status: docker compose ps
+echo.
+echo   Stop system:
+echo   docker compose down
+echo.
+echo   View logs:
+echo   docker compose logs -f
+echo.
+echo   Check status:
+echo   docker compose ps
 echo.
 echo Need help? Contact: vrajgavade17@gmail.com
 echo.
 
 echo Opening dashboard in your browser...
-
 timeout /t 3 /nobreak >nul
 
 start http://localhost:3000
