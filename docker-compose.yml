@@ -164,7 +164,7 @@ services:
   # ─────────────────────────────────────────────────────────────────────────
 
   dashboard:
-    image: virajjs/siem-dashboard:v1.0.0
+    image: virajjs/siem-dashboard:latest
     container_name: dashboard
     ports:
       - "3000:80"
