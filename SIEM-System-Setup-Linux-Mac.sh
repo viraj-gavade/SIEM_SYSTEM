@@ -4,7 +4,7 @@ set -e
 
 clear
 echo "=================================================="
-echo "        SIEM System v1.1.1 - macOS/Linux Setup"
+echo "        SIEM System v1.1.2 - macOS/Linux Setup"
 echo "=================================================="
 echo ""
 echo "=================================================="
