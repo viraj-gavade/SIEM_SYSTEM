@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 cls
 echo ==================================================
-echo          SIEM System v1.1.2 - Windows Setup
+echo          SIEM System v1.2.2 - Windows Setup
 echo ==================================================
 echo.
 echo ==================================================
